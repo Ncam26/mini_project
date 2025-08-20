@@ -15,4 +15,5 @@ Route::get('/', function () {return view('trangchu');})->name('trangchu');
 // PUT    /todos/{todo}  -> update (cập nhật)
 // DELETE /todos/{todo}  -> destroy (xóa)
 Route::resource('todos', TodoController::class);
-
+Route::put('/todos/{todo}', [TodoController::class, 'update'])->name('todos.update');
+Route::post('/todos/{todo}', [TodoController::class, 'destroy']);
