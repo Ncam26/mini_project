@@ -106,24 +106,6 @@
 
     <!-- Script -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            document.querySelectorAll(".btn-edit").forEach(btn => {
-                btn.addEventListener("click", () => {
-                    let item = btn.closest(".list-group-item");
-                    item.querySelector(".view-mode").style.display = "none";
-                    item.querySelector(".edit-form").style.display = "block";
-                });
-            });
-
-            document.querySelectorAll(".btn-cancel-edit").forEach(btn => {
-                btn.addEventListener("click", () => {
-                    let item = btn.closest(".list-group-item");
-                    item.querySelector(".edit-form").style.display = "none";
-                    item.querySelector(".view-mode").style.display = "block";
-                });
-            });
-        });
-    </script>
+     
 </body>
 </html>
