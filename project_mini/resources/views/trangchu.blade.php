@@ -35,10 +35,8 @@
             background-color: var(--background-color);
             color: var(--dark-color);
             line-height: 1.6;
-            transition: var(--transition);
-
+            transition: var(--transition); 
         }
-
         .container {
             width: 90%;
             max-width: 1200px;
@@ -48,55 +46,46 @@
             border-radius: var(--border-radius-lg);
             position: relative;
             transition: var(--transition); 
-
         }
-
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding-bottom: 30px;
             border-bottom: 1px solid #eee;
-            margin-bottom: 30px;
+            margin-bottom: 30px;  
         }
-
         .company-logo {
             font-weight: 700; 
             font-size: 28px; 
             color: var(--primary-color);
         }
-
         .main-nav a {
             text-decoration: none;
             color: var(--text-color);
             margin-left: 30px;
             font-weight: 600;
             transition: color 0.3s ease;
-        }
-        
+        }  
         .main-nav a:hover {
             color: var(--primary-color);
         }
-
         .hero-section {
             display: flex;
             align-items: center;
             padding: 50px 0;
             gap: 40px;
         }
-
         .hero-content {
             flex: 1;
             padding-right: 20px;
         }
-
         .hero-content h1 {
             font-size: 56px; 
             line-height: 1.1;
             color: var(--dark-color);
             margin-bottom: 15px;
         }
-
         .hero-content p {
             font-size: 18px; 
             color: var(--text-color);

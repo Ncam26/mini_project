@@ -60,4 +60,9 @@ class TodoController extends Controller
         
         return redirect()->route('todos.index');
     }
+    public function toggle(Todo $todo)
+    {
+        $todo->update(['completed' => !$todo->completed]);
+        return back();
+    }
 }

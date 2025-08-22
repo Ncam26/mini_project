@@ -168,4 +168,22 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+    // Xử lý sự kiện click để đánh dấu công việc là đã hoàn thành
+     document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll(".btn-edit").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    let item = btn.closest(".list-group-item");
+                    item.querySelector(".view-mode").style.display = "none";
+                    item.querySelector(".edit-form").style.display = "block";
+                });
+            });
+
+            document.querySelectorAll(".btn-cancel-edit").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    let item = btn.closest(".list-group-item");
+                    item.querySelector(".edit-form").style.display = "none";
+                    item.querySelector(".view-mode").style.display = "block";
+                });
+            });
+        });
 });

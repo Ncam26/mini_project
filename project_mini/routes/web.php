@@ -16,3 +16,4 @@ Route::get('/', function () {return view('trangchu');})->name('trangchu');
 // DELETE /todos/{todo}  -> destroy (xóa)
 Route::resource('todos', TodoController::class);
 Route::post('/todos/{todo}', [TodoController::class, 'destroy']);
+Route::patch('todos/{todo}/toggle', [TodoController::class, 'toggle'])->name('todos.toggle');

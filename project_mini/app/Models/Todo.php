@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Todo extends Model
 {
     use HasFactory;
-    protected $fillable = ['title', 'completed'];
+    protected $fillable = ['title', 'completed', 'description', 'due_date'];
+    
+    protected $casts = ['completed' => 'boolean'];
 
     //
 }

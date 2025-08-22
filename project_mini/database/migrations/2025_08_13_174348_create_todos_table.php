@@ -17,6 +17,8 @@ return new class extends Migration
         $table->text('description')->nullable();
         $table->date('due_date')->nullable(); // Thêm dòng này
         $table->timestamps();
+        $table->boolean('completed')->default(false); // Trạng thái hoàn thành, mặc định là false
+        $table->softDeletes(); // Thêm cột deleted_at để hỗ trợ soft delete
     });
 }
 
