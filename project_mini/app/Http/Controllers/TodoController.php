@@ -4,60 +4,60 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Todo;
+use Illuminate\Validation\ValidationException;
 
 class TodoController extends Controller
 {
     public function index()
     {
-    $todos = Todo::all();
-    return view('todos.index', compact('todos'));
+        $todos = Todo::all();
+        return view('todos.index', compact('todos'));
     }
 
     public function store(Request $request)
     {
-    $request->validate(['title' => 'required|max:255']);
-    
-    Todo::create(['title' => $request->title]);
+        $validatedData = $request->validate([
+            'title' => 'required|max:255',
+            'description' => 'nullable|string',
+        ]);
+        
+        $todo = Todo::create($validatedData);
 
-    return redirect()->route('todos.index');
-    }
+        if ($request->ajax()) {
+            return response()->json($todo);
+        }
 
-    public function create(todo $todo)
-    {
-    // Hiển thị form tạo công việc mới
-    return view('todos.create', compact('todo'));
-    }
-
-    public function edit(Todo $todo)
-    {
-    // Hiển thị form chỉnh sửa công việc
-    // Trả về view với biến $todo chứa thông tin công việc cần chỉnh sửa
-    return view('todos.edit', compact('todo'));
+        return redirect()->route('todos.index');
     }
     
     public function update(Request $request, Todo $todo)
     {
-    // Kiểm tra dữ liệu đầu vào
-    $request->validate(['title' => 'required|max:255']);
+        try {
+            $validatedData = $request->validate([
+                'title' => 'required|max:255',
+                'description' => 'nullable|string',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
 
-    // Cập nhật công việc
-    $todo->update(['title' => $request->title]);
+        $todo->update($validatedData);
 
-    // Trả về phản hồi JSON
-    return response()->json($todo);
+        if ($request->ajax()) {
+            return response()->json($todo);
+        }
+
+        return redirect()->route('todos.index');
     }
     
-    public function destroy(Todo $todo)
+    public function destroy(Request $request, Todo $todo)
     {
-    // Xóa công việc
-    // Trả về phản hồi JSON
-    $todo->delete();
-    return redirect()->route('todos.index');
+        $todo->delete();
+
+        if ($request->ajax()) {
+            return response()->json(['message' => 'Công việc đã được xóa.']);
+        }
+        
+        return redirect()->route('todos.index');
     }
-    public function show(Todo $todo)
-    {
-    // Hiển thị chi tiết công việc
-        return view('todos.show', compact('todo'));
-    }
-   
 }

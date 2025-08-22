@@ -9,15 +9,16 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::create('todos', function (Blueprint $table) {
-            $table->id();
-            $table->string('title');
-            $table->boolean('completed')->default(false);
-            $table->timestamps();
-        });
-    }
+   public function up()
+{
+    Schema::create('todos', function (Blueprint $table) {
+        $table->id();
+        $table->string('title');
+        $table->text('description')->nullable();
+        $table->date('due_date')->nullable(); // Thêm dòng này
+        $table->timestamps();
+    });
+}
 
     /**
      * Reverse the migrations.
