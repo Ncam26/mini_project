@@ -4,9 +4,9 @@ import './bootstrap';
 document.addEventListener('DOMContentLoaded', function() {
     // Khai báo các biến DOM chính
     const todoList = document.querySelector('#todo-list'); 
-    const addTodoForm = document.getElementById('addTodoForm'); 
-    const modalInstance = new bootstrap.Modal(document.getElementById('addTodoModal')); 
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); 
+    const addTodoForm = document.getElementById('addTodoForm');
+    const modalInstance = new bootstrap.Modal(document.getElementById('addTodoModal'));
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
     // Hàm này tạo chuỗi HTML cho một công việc mới
     const createTodoHtml = (todo) => { 
