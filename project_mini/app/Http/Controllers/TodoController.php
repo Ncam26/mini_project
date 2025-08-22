@@ -16,7 +16,6 @@ class TodoController extends Controller
 
     public function store(Request $request)
     {
-<<<<<<< HEAD
         $validatedData = $request->validate([
             'title' => 'required|max:255',
             'description' => 'nullable|string',
@@ -29,33 +28,15 @@ class TodoController extends Controller
         }
 
         return redirect()->route('todos.index');
-=======
-    $validatedData = $request->validate([
-        'title' => 'required|max:255',
-        'description' => 'nullable|string', // Thêm dòng này
-    ]);
-
-    $todo = Todo::create($validatedData);
-
-    if ($request->ajax()) {
-        return response()->json($todo);
-    }
-
-    return redirect()->route('todos.index');
->>>>>>> 41930a9d13f02c5637d7c58e835f60f36d20bb7c
     }
     
     public function update(Request $request, Todo $todo)
     {
         try {
-<<<<<<< HEAD
             $validatedData = $request->validate([
-                'title' => 'required|max:255',
+                'title' => 'required|max:255', 
                 'description' => 'nullable|string',
             ]);
-=======
-            $validatedData = $request->validate(['title' => 'required|max:255']);
->>>>>>> 41930a9d13f02c5637d7c58e835f60f36d20bb7c
         } catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors()], 422);
         }
