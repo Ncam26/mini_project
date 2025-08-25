@@ -5,5 +5,5 @@
 + gõ composer install
 +  gõ npm run dev để chạy vite mở link Local:   http://localhost:5173/
 +  gõ php artisan serve để chạy chương trình server running on : [http://127.0.0.1:8000]
-++ ó 2 mục Dasboard và index
+++ có 2 mục Dasboard và index
 ở mục Dasboard thì mình làm cho giao diện có chút sự hiện tại hơn 
