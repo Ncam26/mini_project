@@ -21,10 +21,13 @@ class TodoController extends Controller
             'description' => 'nullable|string',
         ]);
         
+        // Mặc định completed = false khi tạo mới
+        $validatedData['completed'] = false;
+
         $todo = Todo::create($validatedData);
 
         if ($request->ajax()) {
-            return response()->json($todo);
+            return response()->json($todo, 201);
         }
 
         return redirect()->route('todos.index');
@@ -60,9 +63,15 @@ class TodoController extends Controller
         
         return redirect()->route('todos.index');
     }
-    public function toggle(Todo $todo)
+
+    public function toggle(Request $request, Todo $todo)
     {
         $todo->update(['completed' => !$todo->completed]);
+
+        if ($request->ajax()) {
+            return response()->json($todo);
+        }
+
         return back();
     }
 }

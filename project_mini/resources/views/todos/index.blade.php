@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>To‑do List</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -70,42 +72,45 @@
         </div>
 
         <!-- Danh sách công việc -->
-        <ul class="list-group">
-            @foreach($todos as $todo)
-            <li class="list-group-item">
-                <div class="view-mode {{ $todo->completed ? 'todo-completed' : '' }}">
-                    <strong>{{ $todo->title }}</strong>
-                    <p>{{ $todo->description }}</p>
-                    <div>
-                        <form action="{{ route('todos.toggle', $todo->id) }}" method="POST" style="display:inline;">
-                            @csrf @method('PATCH')
-                            <button class="btn btn-sm {{ $todo->completed ? 'btn-success' : 'btn-outline-success' }}">
-                                ✔
-                            </button>
-                        </form>
-                        <button type="button" class="btn btn-sm btn-warning btn-edit">✏ Sửa</button>
-                        <form action="{{ route('todos.destroy', $todo->id) }}" method="POST" style="display:inline;">
-                            @csrf @method('DELETE')
-                            <button class="btn btn-sm btn-danger">🗑</button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Form chỉnh sửa -->
-                <form class="edit-form" action="{{ route('todos.update', $todo->id) }}" method="POST">
-                    @csrf @method('PUT')
-                    <input type="text" name="title" class="form-control mb-2" value="{{ $todo->title }}">
-                    <textarea name="description" class="form-control mb-2">{{ $todo->description }}</textarea>
-                    <button class="btn btn-sm btn-primary">💾 Lưu</button>
-                    <button type="button" class="btn btn-sm btn-secondary btn-cancel-edit">❌ Hủy</button>
+        <ul class="list-group" id="todo-list">
+    @foreach($todos as $todo)
+    <li class="list-group-item">
+        <div class="todo-content view-mode {{ $todo->completed ? 'todo-completed' : '' }}">
+            <span class="todo-title fw-bold">{{ $todo->title }}</span>
+            <p class="todo-description">{{ $todo->description }}</p>
+            <div>
+                <form action="{{ route('todos.toggle', $todo->id) }}" method="POST" style="display:inline;">
+                    @csrf @method('PATCH')
+                    <button class="btn btn-sm {{ $todo->completed ? 'btn-success' : 'btn-outline-success' }}">
+                        ✔
+                    </button>
                 </form>
-            </li>
-            @endforeach
-        </ul>
+                <button type="button" class="edit-btn btn btn-sm btn-warning me-2">✏ Sửa</button>
+                <form action="{{ route('todos.destroy', $todo->id) }}" method="POST" class="delete-form" style="display:inline;">
+                    @csrf @method('DELETE')
+                    <button class="btn btn-sm btn-danger">🗑</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Form chỉnh sửa -->
+        <form class="edit-form" action="{{ route('todos.update', $todo->id) }}" method="POST" style="display:none;">
+            @csrf @method('PUT')
+            <input type="text" name="title" class="form-control mb-2" value="{{ $todo->title }}">
+            <textarea name="description" class="form-control mb-2">{{ $todo->description }}</textarea>
+            <button class="btn btn-sm btn-primary">💾 Lưu</button>
+            <button type="button" class="btn btn-sm btn-secondary btn-cancel-edit">❌ Hủy</button>
+        </form>
+      </li>
+    @endforeach
+      </ul>
+
     </div>
 
     <!-- Script -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-     
+    @vite('resources/js/app.js')
 </body>
+
+
 </html>

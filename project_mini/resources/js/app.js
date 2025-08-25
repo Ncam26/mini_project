@@ -1,95 +1,101 @@
-// app.js
 import './bootstrap';
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Khai báo các biến DOM chính
-    const todoList = document.querySelector('#todo-list'); 
+document.addEventListener('DOMContentLoaded', function () {
+    // Kiểm tra phần tử tồn tại trước khi dùng
+    const todoList = document.querySelector('#todo-list');
     const addTodoForm = document.getElementById('addTodoForm');
-    const modalInstance = new bootstrap.Modal(document.getElementById('addTodoModal'));
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    const modalElement = document.getElementById('addTodoModal');
+    const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+    const csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : '';
 
-    // Hàm này tạo chuỗi HTML cho một công việc mới
-    const createTodoHtml = (todo) => { 
+    const modalInstance = modalElement ? new bootstrap.Modal(modalElement) : null;
+
+ 
+     //Tạo HTML cho công việc mới
+    
+    const createTodoHtml = (todo) => {
         const descriptionHtml = todo.description ? `<p class="todo-description">${todo.description}</p>` : '';
         return `
-            <li class="list-group-item d-flex justify-content-between align-items-center mb-2" id="todo-${todo.id}">
-                <div class="todo-content">
-                    <span class="todo-title">${todo.title}</span>
-                    ${descriptionHtml}
+        <li class="list-group-item d-flex justify-content-between align-items-center mb-2" id="todo-${todo.id}">
+            <div class="todo-content">
+                <span class="todo-title">${todo.title}</span>
+                ${descriptionHtml}
+            </div>
+            <form action="/todos/${todo.id}" method="POST" class="edit-form flex-grow-1 me-2" style="display: none;">
+                <input type="hidden" name="_token" value="${csrfToken}">
+                <input type="hidden" name="_method" value="PUT">
+                <div class="d-flex flex-column">
+                    <input type="text" name="title" value="${todo.title}" class="form-control mb-2" required>
+                    <textarea name="description" class="form-control mb-2" rows="3">${todo.description || ''}</textarea>
+                    <button type="submit" class="btn btn-sm btn-success update-btn">Cập nhật</button>
                 </div>
-                <form action="/todos/${todo.id}" method="POST" class="edit-form flex-grow-1 me-2" style="display: none;">
+            </form>
+            <div class="d-flex action-buttons">
+                <button type="button" class="edit-btn btn btn-sm btn-warning me-2">Sửa</button>
+                <form action="/todos/${todo.id}" method="POST" class="d-inline delete-form">
                     <input type="hidden" name="_token" value="${csrfToken}">
-                    <input type="hidden" name="_method" value="PUT">
-                    <div class="d-flex flex-column">
-                        <input type="text" name="title" value="${todo.title}" class="form-control mb-2" required>
-                        <textarea name="description" class="form-control mb-2" rows="3">${todo.description || ''}</textarea>
-                        <button type="submit" class="btn btn-sm btn-success update-btn">Cập nhật</button>
-                    </div>
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
                 </form>
-                <div class="d-flex action-buttons">
-                    <button class="edit-btn btn btn-sm btn-warning me-2">Sửa</button>
-                    <form action="/todos/${todo.id}" method="POST" class="d-inline delete-form">
-                        <input type="hidden" name="_token" value="${csrfToken}">
-                        <input type="hidden" name="_method" value="DELETE">
-                        <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
-                    </form>
-                </div>
-            </li>
+            </div>
+        </li>
         `;
     };
 
-    //  Xử lý form Thêm mới công việc
-    addTodoForm.addEventListener('submit', async (e) => {
-        e.preventDefault(); 
-        const formData = new FormData(addTodoForm);
-        const data = Object.fromEntries(formData.entries());
+  
+     //Thêm công việc mới
+   
+    if (addTodoForm && todoList) {
+        addTodoForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = Object.fromEntries(new FormData(addTodoForm).entries());
 
-        try {
-            // Gửi yêu cầu AJAX đến server
-            const response = await fetch(addTodoForm.action, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken,
-                    'X-Requested-With': 'XMLHttpRequest' // Báo cho Laravel biết đây là yêu cầu AJAX
-                },
-                body: JSON.stringify(data) // Chuyển dữ liệu thành JSON để gửi
-            });
+            try {
+                const response = await fetch(addTodoForm.action, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify(formData)
+                });
 
-            if (response.ok) {
-                const todo = await response.json(); 
-                const newTodoHtml = createTodoHtml(todo);
-                todoList.insertAdjacentHTML('beforeend', newTodoHtml); // Chèn HTML mới vào danh sách
-                addTodoForm.reset();
-                modalInstance.hide(); 
-            } else {
-                const errorData = await response.json();
-                console.error('Lỗi khi thêm:', errorData);
-                alert('Lỗi: ' + (errorData.message || 'Không thể thêm công việc.'));
+                if (response.ok) {
+                    const todo = await response.json();
+                    todoList.insertAdjacentHTML('beforeend', createTodoHtml(todo));
+                    addTodoForm.reset();
+                    modalInstance?.hide();
+                } else {
+                    const errorData = await response.json();
+                    alert('Lỗi: ' + (errorData.message || 'Không thể thêm công việc.'));
+                }
+            } catch (error) {
+                console.error('Lỗi khi thêm công việc:', error);
             }
-        } catch (error) {
-            console.error('Lỗi khi thêm công việc:', error);
-        }
-    });
+        });
+    }
 
-    //  Xử lý tất cả các hành động trên mỗi công việc (Sửa, Xóa, Cập nhật)
-    todoList.addEventListener('click', async (e) => {
+
+     // Sửa, Xóa, Cập nhật công việc
+  
+    todoList?.addEventListener('click', async (e) => {
         const item = e.target.closest('li.list-group-item');
         if (!item) return;
 
-        // Xử lý nút Sửa
-        const editBtn = e.target.closest('.edit-btn'); 
-        if (editBtn) {
-            e.preventDefault();
+        // Sửa
+        if (e.target.closest('.edit-btn')) {
             const todoContent = item.querySelector('.todo-content');
             const editForm = item.querySelector('.edit-form');
-            todoContent.style.display = 'none'; 
-            editForm.style.display = 'flex'; 
-            editBtn.style.display = 'none'; 
-            editForm.querySelector('input[name="title"]').focus();
+            if (todoContent && editForm) {
+                todoContent.style.display = 'none';
+                editForm.style.display = 'flex';
+                e.target.style.display = 'none';
+                editForm.querySelector('input[name="title"]')?.focus();
+            }
         }
 
-        // Xử lý form Xóa
+        //  Xóa
         const deleteForm = e.target.closest('.delete-form');
         if (deleteForm) {
             e.preventDefault();
@@ -98,15 +104,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': csrfToken,
-                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-Requested-With': 'XMLHttpRequest'
                     },
-                    body: new FormData(deleteForm) // Gửi form data
+                    body: new FormData(deleteForm)
                 });
                 if (response.ok) {
-                    item.remove(); 
+                    item.remove();
                 } else {
                     const errorData = await response.json();
-                    console.error('Lỗi khi xóa:', errorData);
                     alert('Lỗi: ' + (errorData.message || 'Không thể xóa công việc.'));
                 }
             } catch (error) {
@@ -115,21 +120,21 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Xử lý form Cập nhật công việc
-    todoList.addEventListener('submit', async (e) => {
+    
+     //Cập nhật công việc
+    
+    todoList?.addEventListener('submit', async (e) => {
         const editForm = e.target.closest('.edit-form');
         if (editForm) {
             e.preventDefault();
             const item = editForm.closest('li.list-group-item');
-            
-            const newTitle = editForm.querySelector('input[name="title"]').value;
-            const newDescription = editForm.querySelector('textarea[name="description"]').value;
-            
+            const todoContent = item.querySelector('.todo-content');
+
             const data = {
-                title: newTitle,
-                description: newDescription,
+                title: editForm.querySelector('input[name="title"]').value,
+                description: editForm.querySelector('textarea[name="description"]').value
             };
-            
+
             try {
                 const response = await fetch(editForm.action, {
                     method: 'PUT',
@@ -140,33 +145,27 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     body: JSON.stringify(data)
                 });
+
                 if (response.ok) {
-                    const todo = await response.json(); // Lấy dữ liệu cập nhật
-                    
-                    const todoContent = item.querySelector('.todo-content'); 
-                    todoContent.querySelector('.todo-title').innerText = todo.title; // Cập nhật tiêu đề
-                    
-                    const descriptionElement = todoContent.querySelector('.todo-description');
-                    if (descriptionElement) {
-                        descriptionElement.innerText = todo.description || ''; // Cập nhật mô tả
+                    const todo = await response.json();
+                    todoContent.querySelector('.todo-title').innerText = todo.title;
+                    const desc = todoContent.querySelector('.todo-description');
+                    if (desc) {
+                        desc.innerText = todo.description || '';
+                    } else if (todo.description) {
+                        todoContent.insertAdjacentHTML('beforeend', `<p class="todo-description">${todo.description}</p>`);
                     }
-                    
-                    // Cập nhật giá trị trong form để lần chỉnh sửa sau không bị mất dữ liệu
-                    editForm.querySelector('input[name="title"]').value = todo.title; 
-                    editForm.querySelector('textarea[name="description"]').value = todo.description || '';
-                    
-                    todoContent.style.display = 'block'; // Hiện lại nội dung
+
                     editForm.style.display = 'none';
-                    item.querySelector('.edit-btn').style.display = 'inline-block'; // Hiện lại nút "Sửa"
+                    todoContent.style.display = 'block';
+                    item.querySelector('.edit-btn').style.display = 'inline-block';
                 } else {
                     const errorData = await response.json();
-                    console.error('Lỗi khi cập nhật:', errorData);
                     alert('Lỗi: ' + (errorData.message || 'Không thể cập nhật.'));
                 }
             } catch (error) {
-                console.error('Lỗi khi cập nhật:', error);
+                console.error('Lỗi khi cập nhật công việc:', error);
             }
         }
     });
-    
 });
