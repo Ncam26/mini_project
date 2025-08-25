@@ -134,7 +134,8 @@ header {
     transition: transform 0.3s ease;  
 }
 .hero-image img:hover {
-    transform: scale(1.03);
+    transform: scale(1.05);
+
 }
 
 @media (max-width: 768px) {
@@ -155,7 +156,7 @@ header {
         <nav class="main-nav">
             <a href="#">ABOUT</a>
             <a href="#">PRODUCTS</a>
-            <a href="#">PRICES</a>
+            <a href="#">PROFILE</a>
             <a href="#">CONTACT US</a>
         </nav>
     </header>
